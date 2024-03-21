@@ -132,7 +132,7 @@ class AddLocationView(CreateView):
 class MechanicProfileAddView(CreateView):
     model = MechanicProfile
     form_class = MechanicProfileForm
-    template_name = 'profile_update.html'
+    template_name = 'mechanic_profile_add.html'
     success_url = reverse_lazy('mechanic_home')
 
     def get_object(self, queryset=None):
@@ -169,3 +169,151 @@ def approve_mechanic(request, pk):
         mechanic_profile.save()
         return redirect('pending-list')  # Redirect to the pending list page
     return redirect('pending-list')
+
+class MechanicprofileUpdateView(UpdateView):
+    model = MechanicProfile
+    form_class = MechanicProfileForm
+    template_name = 'mechanic_profile_update.html'
+    success_url = reverse_lazy('mechanic_home')
+
+    def get_object(self, queryset=None):
+        return MechanicProfile.objects.get(user=self.request.user)
+
+class UserProfileAddView(CreateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = 'user_profile_add.html'
+    success_url = reverse_lazy('user_home')
+
+    def get_object(self, queryset=None):
+        return UserProfile.objects.filter(user=self.request.user).first()
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form) 
+    
+
+class UserProfileDetailView(DetailView):
+    model = UserProfile
+    template_name = 'user_profile_view.html'
+    context_object_name = 'data'
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(UserProfile, user=self.request.user)
+    
+class UserProfileUpdateView(UpdateView):
+    model = UserProfile
+    form_class = UserProfileForm
+    template_name = 'user_profile_update.html'
+    success_url = reverse_lazy('user_home')
+
+    def get_object(self, queryset=None):
+        return UserProfile.objects.get(user=self.request.user)
+    
+class ApprovedMechanicListView(ListView):
+    model = MechanicProfile
+    template_name = 'approved_mechanic.html'
+    context_object_name = 'mechanics'
+
+    def get_queryset(self):
+        return MechanicProfile.objects.filter(status='approved')
+
+class ReqToMechanicCreateView(CreateView):
+    model = ReqToMechanic
+    form_class = ReqToMechanicForm
+    template_name = 'create_req.html'
+    success_url = reverse_lazy('user_requests')
+
+    def form_valid(self, form):
+        mechanic_id = self.kwargs.get('mechanic_id')
+        mechanic = MechanicProfile.objects.get(pk=mechanic_id)
+        form.instance.mechanic = mechanic
+        # form.instance.user = self.request.user.userprofile
+        form.instance.user = self.request.user.user_profile
+        return super().form_valid(form)
+    
+
+class MechanicReqListView(ListView):
+    model = ReqToMechanic
+    template_name = 'mechanic_req_list.html'
+    context_object_name = 'requests'
+
+    def get_queryset(self):
+        mechanic_profile = self.request.user.mechanic_profile
+        return ReqToMechanic.objects.filter(mechanic=mechanic_profile)
+    
+
+def update_status(request, pk):
+    req = get_object_or_404(ReqToMechanic, pk=pk)
+    if request.method == 'POST':
+        req.status = 'completed'
+        req.save()
+        return redirect('mechanic_requests')  # Redirect to the pending list page
+    return redirect('mechanic_requests')
+
+
+
+class UserRequestsListView(ListView):
+    model = ReqToMechanic
+    template_name = 'user_requests.html'
+    context_object_name = 'user_requests'
+
+    def get_queryset(self):
+        return ReqToMechanic.objects.filter(user=self.request.user.user_profile)
+
+
+
+class FeedBackCreateView(CreateView):
+    model = FeedBack
+    form_class = FeedBackForm
+    template_name = 'feedback.html'
+    success_url = reverse_lazy('user_requests')
+
+    def form_valid(self, form):
+        req_to_mechanic = get_object_or_404(ReqToMechanic, pk=self.kwargs['pk'])
+        form.instance.user = self.request.user.user_profile
+        form.instance.request = req_to_mechanic
+        form.instance.mechanic_id = req_to_mechanic.mechanic.id
+        return super().form_valid(form)
+    
+class FeedbackListView(ListView):
+    model = FeedBack
+    template_name = 'feedback_list.html'
+    context_object_name = 'feedback_list'
+
+    def get_queryset(self):
+        mechanic_profile = self.request.user.mechanic_profile
+        return FeedBack.objects.filter(mechanic=mechanic_profile)
+    
+
+
+class BillPaymentCreateView(CreateView):
+    model = Bill
+    form_class = BillPaymentForm
+    template_name = 'create_bill.html'
+    success_url = reverse_lazy('mechanic_requests')
+
+    def form_valid(self, form):
+        req_id = self.kwargs['pk']
+        req = get_object_or_404(ReqToMechanic, pk=req_id)
+        form.instance.req = req
+        form.instance.mechanic = req.mechanic
+        form.instance.customer = req.user
+        payment_amount = form.cleaned_data['payment']
+        return super().form_valid(form)
+    
+
+
+def bil_payment(request, pk):
+    req = get_object_or_404(ReqToMechanic, pk=pk)
+    bill = get_object_or_404(Bill, req=req)
+    
+    if request.method == 'POST':
+        bill.status = 'completed'
+        bill.save()
+        return redirect('payment')  # Redirect to the pending list page
+    return redirect('user_requests')
+
+
+class PaymentSuccessView(TemplateView):
+    template_name="payment_success.html"

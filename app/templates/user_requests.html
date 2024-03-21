@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Requests Made by You</h1>
+    <ul>
+        {% for request in user_requests %}
+        <li>{{ request.discription }}</li>
+        <form action="{%url 'feedback_form' request.id %}" method="post">
+            {%csrf_token%}
+            <button type="submit">add feedback</button>
+        </form>
+        <form action="{% url 'bill_payment' pk=request.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">Pay Bill</button>
+        </form>
+        {% endfor %}
+    </ul>
+</body>
+</html>

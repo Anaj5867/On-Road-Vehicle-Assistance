@@ -152,3 +152,27 @@ class AddLocationForm(forms.ModelForm):
     class Meta:
         model=Location
         fields=['name',]
+
+
+class UserProfileForm(forms.ModelForm):
+    dob = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    class Meta:
+        model = UserProfile
+        fields = ['name', 'address', 'phone', 'dob', 'profile_pic']
+
+
+class ReqToMechanicForm(forms.ModelForm):
+    class Meta:
+        model = ReqToMechanic
+        fields = ['discription', 'phone', 'location']
+
+    
+class FeedBackForm(forms.ModelForm):
+    class Meta:
+        model = FeedBack
+        fields = ['text', 'rating']
+
+class BillPaymentForm(forms.ModelForm):
+    class Meta:
+        model = Bill
+        fields = ['payment']

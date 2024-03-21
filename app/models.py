@@ -62,6 +62,11 @@ class ReqToMechanic(models.Model):
     discription=models.CharField(max_length=200)
     phone=models.IntegerField()
     location=models.ForeignKey(Location,on_delete=models.CASCADE,related_name="req_location")
+    STATUS_CHOICES = [
+        ("completed", "Completed"),
+        ("pending", "Pending"),
+    ]
+    status = models.CharField(max_length=200, choices=STATUS_CHOICES, default="pending")
 
 
 class Bill(models.Model):
@@ -69,9 +74,16 @@ class Bill(models.Model):
     mechanic=models.ForeignKey(MechanicProfile,on_delete=models.CASCADE)
     req=models.ForeignKey(ReqToMechanic,on_delete=models.CASCADE)
     payment=models.PositiveBigIntegerField()
+    STATUS_CHOICES = [
+        ("completed", "Completed"),
+        ("pending", "Pending"),
+    ]
+    status = models.CharField(max_length=200, choices=STATUS_CHOICES, default="pending")
+
 
 class FeedBack(models.Model):
     user=models.ForeignKey(UserProfile,on_delete=models.CASCADE,related_name="feedback_userprofile")
+    request=models.ForeignKey(ReqToMechanic,on_delete=models.CASCADE,related_name="feedback_req",null=True)
     mechanic=models.ForeignKey(MechanicProfile,on_delete=models.CASCADE,related_name="feedback_mechanicprofile")
     text=models.CharField(max_length=200)
     options=(

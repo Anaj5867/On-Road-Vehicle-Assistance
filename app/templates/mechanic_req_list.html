@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Requests Made to You</h1>
+    <ul>
+        {% for request in requests %}
+        <li>{{ request.discription }}</li>
+        {% if request.status != 'completed' %}
+        <form action="{% url 'mech-approve' request.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">completed</button>
+        </form>
+        {% endif %}
+        {% if not request.bill_set.exists %} <!-- Check if bill is not created -->
+        <form action="{% url 'create_bill_payment' request.id %}" method="post">
+            {% csrf_token %}
+            <button type="submit">create bill</button>
+        </form>
+        {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

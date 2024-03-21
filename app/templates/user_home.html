@@ -6,7 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    user
+    <a href="{%url 'useradd-profile' user.id%}">Add profile</a>
+    <a href="{%url 'userview-profile' user.id%}">view profile</a>
+    <a href="{%url 'approved_mechanics' %}">List of approved mechanics</a>
+    <a href="{%url 'user_requests'%}">View req</a>
     <a href="{%url 'logout' %}">Logout</a>
+    
 </body>
 </html>
