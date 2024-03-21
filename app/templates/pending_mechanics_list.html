@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pending</title>
+</head>
+<body>
+    {%for d in data%}
+        <div class="card" style="width: 18rem;">
+            <img src="{{d.profile_pic.url}}" class="card-img-top" alt="..." width="100",height="100">
+            <div class="card-body">
+                <h5 class="card-title">{{d.name}}</h5>
+                <p class="card-text">{{d.status}}</p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">An item</li>
+                <li class="list-group-item">A second item</li>
+                <li class="list-group-item">A third item</li>
+            </ul>
+            <div class="card-body">
+                <a href="#" class="card-link">Card link</a>
+                <a href="#" class="card-link">Another link</a>
+            <form method="post" action="{% url 'approve' d.id %}">
+                {% csrf_token %}
+                <input type="submit" value="Approve">
+            </form>
+            </div>
+        </div>
+    {%endfor%}
+</body>
+</html>

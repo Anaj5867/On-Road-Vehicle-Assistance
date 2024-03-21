@@ -11,6 +11,7 @@ class Location(models.Model):
 
 class User(AbstractUser):
     ROLE_CHOICES = [
+        ("admin","Admin"),
         ("user", "User"),
         ("mechanic", "Mechanic"),
         ("car_renter","Car Renter")
@@ -19,10 +20,11 @@ class User(AbstractUser):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_profile")
+    name=models.CharField(max_length=20)
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=200)
     dob = models.DateField(null=True)
-    profile_pic = models.ImageField(upload_to="images/profile",default='images/profile/default.jpg', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to="static/images/profile",default='static/images/profile/default.jpg', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -30,12 +32,17 @@ class UserProfile(models.Model):
 
 class MechanicProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="mechanic_profile")
+    name=models.CharField(max_length=100)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name="mechanic_location")
     phone = models.CharField(max_length=200)
     dob = models.DateField(null=True)
     skills = models.TextField()
     experience = models.CharField(max_length=200)
-    is_approved = models.BooleanField(default=False)
+    STATUS_CHOICES = [
+        ("approved", "Approved"),
+        ("pending", "Pending"),
+    ]
+    status = models.CharField(max_length=200, choices=STATUS_CHOICES, default="pending")
     SPECIALIZATION_CHOICES = [
         ("two_wheeler", "Two Wheeler"),
         ("four_wheeler", "Four Wheeler"),
@@ -43,7 +50,7 @@ class MechanicProfile(models.Model):
     ]
     specialized_in = models.CharField(max_length=200, choices=SPECIALIZATION_CHOICES)
     bio = models.CharField(max_length=200)
-    profile_pic = models.ImageField(upload_to="images/profile",default='images/profile/default.jpg', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to="static/images/profile",default='static/images/profile/default.jpg', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -79,11 +86,12 @@ class FeedBack(models.Model):
 
 class CarRenterProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="carrental_profile")
+    name=models.CharField(max_length=20)
     address = models.CharField(max_length=200)
     phone = models.CharField(max_length=200)
     dob = models.DateField(null=True)
     bio = models.CharField(max_length=200)
-    profile_pic = models.ImageField(upload_to="images/profile",default='images/profile/default.jpg', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to="static/images/profile",default='static/images/profile/default.jpg', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -92,7 +100,7 @@ class RentCar(models.Model):
     owner=models.ForeignKey(CarRenterProfile,on_delete=models.CASCADE,related_name="carrental_profile")
     name=models.CharField(max_length=200)
     price=models.PositiveBigIntegerField()
-    car_img=models.ImageField(upload_to="images/car",default='images/car/default.jpg', blank=True, null=True)
+    car_img=models.ImageField(upload_to="static/images/car",default='static/images/car/default.jpg', blank=True, null=True)
     discription=models.CharField(max_length=200)
     def __str__(self):
         return self.name

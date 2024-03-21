@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Add Location</title>
 </head>
 <body>
-    user
-    <a href="{%url 'logout' %}">Logout</a>
+    <form action="" method="post">
+        {%csrf_token%}
+        {{form.as_p}}
+        <button>add</button>
+    </form>
 </body>
 </html>
