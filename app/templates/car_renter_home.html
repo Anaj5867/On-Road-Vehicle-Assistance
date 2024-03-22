@@ -6,7 +6,12 @@
     <title>Document</title>
 </head>
 <body>
-    car
+    <a href="{%url 'car_renter_profile' user.id%}">Add profile</a>
+    <a href="{%url 'car_renter_profile_view' %}">View profile</a>
+    <a href="{%url 'rent_car_create'%}">Add Car</a>
+    <a href="{%url 'rentcar_list'%}">view car</a>
+    <a href="{%url 'car_owner_reservations'%}">View Reservation</a>
+    <a href="{%url 'change_password'%}">Change Password</a>
     <a href="{%url 'logout' %}">logout</a>
 </body>
 </html>

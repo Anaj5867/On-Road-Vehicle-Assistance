@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Car Reservations</title>
+</head>
+
+<body>
+    <h1>My Car Reservations</h1>
+    <ul>
+        {% for reservation in reservations %}
+        <li>
+            <strong>Car:</strong> {{ reservation.car.name }}<br>
+            <strong>Start Date:</strong> {{ reservation.start_date }}<br>
+            <strong>End Date:</strong> {{ reservation.end_date }}<br>
+            <strong>Total Price:</strong> ${{ reservation.total_price }}<br>
+            <strong>Checked Out:</strong> {% if reservation.checked_out %}Yes{% else %}No{% endif %}<br>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

@@ -34,10 +34,28 @@ path("create/req/<int:mechanic_id>", ReqToMechanicCreateView.as_view(), name="cr
 path('requests/', UserRequestsListView.as_view(), name='user_requests'),
 path('feedback/<int:pk>', FeedBackCreateView.as_view(), name='feedback_form'),
 path('bill-payment/<int:pk>/', bil_payment, name='bill_payment'),
+path('cars/available/', RentCarListView.as_view(), name='available_cars'),
+path('reserve/<int:pk>/', ReserveCarView.as_view(), name='reserve_car'),
+path('reservations/', UserReservationListView.as_view(), name='user_reservation_list'),
+path('update_reservation/<int:pk>/',update_reservation, name='update_reservation'),
+
+#car renter URLS
+path("car/home", CarRenterHomeView.as_view(), name="car_home"),
+path('car_renter_profile/<int:pk>', CarRenterProfileCreateView.as_view(), name='car_renter_profile'),
+path('car_renter_profile/update/<int:pk>', CarRenterProfileUpdateView.as_view(), name='car_renter_profile_update'),
+path('car_renter_profile/view/', CarRenterProfileDetailView.as_view(), name='car_renter_profile_view'),
+path('rent_car/', RentCarCreateView.as_view(), name='rent_car_create'),
+path('rent_car/update/<int:pk>/', RentCarUpdateView.as_view(), name='rent_car_update'),
+path('rentcars/', UserRentCarListView.as_view(), name='rentcar_list'),
+ path('my_reservations/', CarOwnerReservationsListView.as_view(), name='car_owner_reservations'),
+
+# path('reservation/<int:pk>', ReservationDetailView.as_view(), name='reservation_detail'),
+
 
 # Common URLs
 path("",HomeView.as_view(),name="home"),
 path('login/', LoginView.as_view(), name='login'),
 path('logout/', LogoutView, name='logout'), 
+path('change-password/', CustomPasswordChangeView.as_view(), name='change_password'),
 path("payment/sucess/",PaymentSuccessView.as_view(),name="payment"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

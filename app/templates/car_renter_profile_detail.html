@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Renter Profile</title>
+</head>
+
+<body>
+    <h1>Car Renter Profile</h1>
+    <p>Name: {{ object.name }}</p>
+    <p>Address: {{ object.address }}</p>
+    <p>Phone: {{ object.phone }}</p>
+    <p>Date of Birth: {{ object.dob }}</p>
+    <p>Bio: {{ object.bio }}</p>
+    {% if object.profile_pic %}
+    <img src="{{ object.profile_pic.url }}" alt="Profile Picture">
+    <a href="{%url 'car_renter_profile_update' user.id%}">update profile</a>
+    {% endif %}
+</body>
+
+</html>

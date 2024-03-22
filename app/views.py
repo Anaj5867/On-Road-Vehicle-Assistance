@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.views import PasswordChangeView
 # Create your views here.
 
 
@@ -111,7 +112,7 @@ class LoginView(FormView):
             if user.role == 'mechanic':
                 return redirect('mechanic_home')
             elif user.role == 'car_renter':
-                return redirect('car_renter_home')
+                return redirect('car_home')
             else:
                 return redirect('user_home')
         return super().form_invalid(form)
@@ -317,3 +318,145 @@ def bil_payment(request, pk):
 
 class PaymentSuccessView(TemplateView):
     template_name="payment_success.html"
+
+
+
+
+class CarRenterProfileCreateView(CreateView):
+    model = CarRenterProfile
+    form_class = CarRenterProfileForm
+    template_name = 'car_renter_profile.html'
+    success_url = reverse_lazy('car_home')
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+
+class CarRenterProfileUpdateView(UpdateView):
+    model = CarRenterProfile
+    form_class = CarRenterProfileForm
+    template_name = 'car_renter_profile_update.html'
+    success_url = reverse_lazy('car_renter_profile_view')
+
+    def get_object(self, queryset=None):
+        return self.request.user.carrental_profile
+    
+class CarRenterProfileDetailView(DetailView):
+    model = CarRenterProfile
+    template_name = 'car_renter_profile_detail.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user.carrental_profile
+    
+
+class RentCarCreateView(CreateView):
+    model = RentCar
+    form_class = RentCarForm
+    template_name = 'rent_car.html'
+    success_url = reverse_lazy('rentcar_list')
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user.carrental_profile
+        return super().form_valid(form)
+
+class RentCarUpdateView(UpdateView):
+    model = RentCar
+    form_class = RentCarForm
+    template_name = 'rent_car_update.html'
+    success_url = reverse_lazy('rentcar_list')
+
+    def get_queryset(self):
+        return super().get_queryset().filter(owner=self.request.user.carrental_profile)
+    
+class UserRentCarListView(ListView):
+    model = RentCar
+    template_name = 'rentcar_list.html'
+    context_object_name = 'rentcars'
+
+    def get_queryset(self):
+        return RentCar.objects.filter(owner=self.request.user.carrental_profile)
+    
+
+class RentCarListView(ListView):
+    model = RentCar
+    template_name = 'rent_car_user_list.html'
+    context_object_name = 'cars'
+
+    def get_queryset(self):
+        return RentCar.objects.filter(status='available')
+    
+class ReserveCarView(CreateView):
+    model = CarReserve
+    form_class = ReservationForm
+    template_name = 'reserve_car.html'
+    success_url = reverse_lazy('user_home')
+
+    def form_valid(self, form):
+        form.instance.customer = self.request.user.user_profile
+        form.instance.car = RentCar.objects.get(pk=self.kwargs['pk'])
+        form.instance.total_price = self.calculate_total_price(form.cleaned_data['start_date'], form.cleaned_data['end_date'], form.instance.car.price)
+
+        # Update the status of the car to 'not available'
+        form.instance.car.status = 'not_available'
+        form.instance.car.save()
+
+        return super().form_valid(form)
+
+    def calculate_total_price(self, start_date, end_date, price_per_day):
+        total_days = (end_date - start_date).days
+        return total_days * price_per_day
+
+# class ReservationDetailView(DetailView):
+    # model = CarReserve
+    # template_name = 'reservation_detail.html'
+    # context_object_name = 'reservation'
+
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     return queryset.filter(customer=self.request.user.user_profile)
+
+
+class UserReservationListView(ListView):
+    model = CarReserve
+    template_name = 'user_reservation_list.html'
+    context_object_name = 'reservations'
+
+    def get_queryset(self):
+        return CarReserve.objects.filter(customer=self.request.user.user_profile)
+    
+
+def update_reservation(request, pk):
+    reservation = get_object_or_404(CarReserve, pk=pk)
+    if request.method == 'POST':
+        reservation.checked_out = True
+        reservation.save()
+        car = reservation.car
+        car.status = 'available'
+        car.save()
+    return redirect('user_reservation_list') 
+
+
+class CarOwnerReservationsListView(ListView):
+    model = CarReserve
+    template_name = 'car_owner_reservations.html'
+    context_object_name = 'reservations'
+
+    def get_queryset(self):
+        # Filter reservations by cars owned by the current car owner
+        return CarReserve.objects.filter(car__owner=self.request.user.carrental_profile)
+
+    
+class CustomPasswordChangeView(PasswordChangeView):
+    template_name = 'change_password.html'
+
+
+    def get_success_url(self):
+        if self.request.user.role == 'admin':
+            return reverse_lazy('admin-home')
+        elif self.request.user.role == 'mechanic':
+            return reverse_lazy('mechanic_home')
+        elif self.request.user.role == 'car_renter':
+            return reverse_lazy('car_home')
+        else:
+            return reverse_lazy('user_home')

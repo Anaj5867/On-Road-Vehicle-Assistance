@@ -176,3 +176,23 @@ class BillPaymentForm(forms.ModelForm):
     class Meta:
         model = Bill
         fields = ['payment']
+
+class CarRenterProfileForm(forms.ModelForm):
+    dob = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    class Meta:
+        model = CarRenterProfile
+        fields = ['name', 'address', 'phone', 'dob', 'bio', 'profile_pic']
+
+
+class RentCarForm(forms.ModelForm):
+    class Meta:
+        model = RentCar
+        fields = ['name', 'price', 'car_img', 'discription']
+
+
+class ReservationForm(forms.ModelForm):
+    start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}))
+    class Meta:
+        model = CarReserve
+        fields = ['start_date', 'end_date']

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Cars</title>
+</head>
+
+<body>
+    <h1>Available Cars</h1>
+    <ul>
+        {% for car in cars %}
+        <li>
+            <strong>Name:</strong> {{ car.name }}<br>
+            <strong>Price:</strong> {{ car.price }}<br>
+            <strong>Description:</strong> {{ car.description }}<br>
+            {% if car.car_img %}
+            <img src="{{ car.car_img.url }}" alt="Car Image"><br>
+            {% endif %}
+            <a href="{%url 'reserve_car' car.id %}">reserve</a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Rent Cars</title>
+</head>
+
+<body>
+    <h1>Your Rent Cars</h1>
+    <ul>
+        {% for rentcar in rentcars %}
+        <li>{{ rentcar.name }} - {{ rentcar.price }}</li>
+        <a href="{%url 'rent_car_update' rentcar.id%}">update</a>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>

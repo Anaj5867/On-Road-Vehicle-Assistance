@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservation Details</title>
+</head>
+
+<body>
+    <h1>Reservation Details</h1>
+    <p><strong>Start Date:</strong> {{ reservation.start_date }}</p>
+    <p><strong>End Date:</strong> {{ reservation.end_date }}</p>
+    <p><strong>Total Price:</strong> {{ reservation.total_price }}</p>
+    <a href="{%url 'car_home'%}">home</a>
+</body>
+
+</html>

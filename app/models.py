@@ -114,6 +114,11 @@ class RentCar(models.Model):
     price=models.PositiveBigIntegerField()
     car_img=models.ImageField(upload_to="static/images/car",default='static/images/car/default.jpg', blank=True, null=True)
     discription=models.CharField(max_length=200)
+    STATUS_CHOICES = [
+        ("available", "Available"),
+        ("not_available", "Not Available"),
+    ]
+    status = models.CharField(max_length=200, choices=STATUS_CHOICES, default="available")
     def __str__(self):
         return self.name
 
@@ -122,7 +127,6 @@ class CarReserve(models.Model):
     car=models.ForeignKey(RentCar,on_delete=models.CASCADE)
     start_date=models.DateField()
     end_date=models.DateField()
-    ticket_code = models.CharField(max_length=6, blank=True, null=True)
     checked_out = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
