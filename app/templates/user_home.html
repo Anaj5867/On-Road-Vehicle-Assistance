@@ -15,5 +15,11 @@
     <a href="{%url 'change_password'%}">Change Password</a>
     <a href="{%url 'logout' %}">Logout</a>
     
+    <div>
+        <form class="d-flex" role="search" method="GET" action="{% url 'mechanic_search' %}">
+            <input class="form-control me-2" name="mechanic" type="search" placeholder="Search Category" aria-label="Search">
+            <button class="btn btn-dark" type="submit">Search</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -196,3 +196,6 @@ class ReservationForm(forms.ModelForm):
     class Meta:
         model = CarReserve
         fields = ['start_date', 'end_date']
+
+class MechanicSearchForm(forms.Form):
+    mechanic = forms.CharField(max_length=30, required=False)

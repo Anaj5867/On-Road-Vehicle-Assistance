@@ -460,3 +460,24 @@ class CustomPasswordChangeView(PasswordChangeView):
             return reverse_lazy('car_home')
         else:
             return reverse_lazy('user_home')
+        
+def mechanic_search(request):
+    if request.method == 'GET':
+        form = MechanicSearchForm(request.GET)
+        if form.is_valid():
+            mechanic = form.cleaned_data.get('mechanic')
+            print(mechanic)
+            # services = MechanicProfile.objects.filter(name__icontains=mechanic)
+            services = MechanicProfile.objects.filter(location__name__icontains=mechanic)
+            print(services)
+            if services:
+                return render(request, 'search_results.html', {'mechanics': services})
+            else:
+                error_message = "No services found for the provided category"
+                return render(request, 'search_results.html', {'form': form, 'error_message': error_message})
+        else:
+            error_message = "Invalid search criteria."
+            return render(request, 'search_results.html', {'form': form, 'error_message': error_message})
+    else:
+        form = MechanicSearchForm()
+        return render(request, 'search_results.html', {'form': form})    

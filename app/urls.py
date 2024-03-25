@@ -58,4 +58,5 @@ path('login/', LoginView.as_view(), name='login'),
 path('logout/', LogoutView, name='logout'), 
 path('change-password/', CustomPasswordChangeView.as_view(), name='change_password'),
 path("payment/sucess/",PaymentSuccessView.as_view(),name="payment"),
+path('search/',mechanic_search, name='mechanic_search'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
