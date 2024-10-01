@@ -199,3 +199,8 @@ class ReservationForm(forms.ModelForm):
 
 class MechanicSearchForm(forms.Form):
     mechanic = forms.CharField(max_length=30, required=False)
+
+class DetailForm(forms.ModelForm):
+    class Meta:
+        model=ReqToMechanic
+        fields=['detail_head']

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Pending Mechanic Requests</h2>
+<ul>
+    {% for mechanic in mechanics %}
+    <li>
+        {{ mechanic.name }} - {{ mechanic.status }}
+        <form action="{% url 'delete-mechanic' mechanic.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" onclick="return confirm('Are you sure you want to delete this mechanic request?');">Delete</button>
+        </form>
+        <form action="{% url 'approve-mechanic' mechanic.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit">Approve</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

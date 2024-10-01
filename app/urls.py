@@ -4,23 +4,24 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     # Admin URLs
-path("admin/home", AdminHomeView.as_view(), name="admin-home"),
+path("home/admin", AdminHomeView.as_view(), name="admin-home"),
 path("register/admin", AdminRegistrationView.as_view(), name="admin-registration"),
 path('login/admin', AdminLoginView.as_view(), name='admin-login'),
 path('add/locations', AddLocationView.as_view(), name="add-locations"),
 path('approval/<int:pk>', approve_mechanic, name="approve"),
+path('delete-mechanic/<int:pk>/', delete_mechanic, name='delete-mechanic'),
 
 # Mechanic URLs
 path("mechanic/home", MechnaicHomeView.as_view(), name="mechanic_home"),
 path("add/profile/<int:pk>", MechanicProfileAddView.as_view(), name="add-profile"),
 path("profile/view/<int:pk>", MechanicProfileDetailView.as_view(), name="view-profile"),
-path("profile/update/<int:pk>", MechanicprofileUpdateView.as_view(), name="update-profile"),
+path("profile/<int:pk>/update", MechanicprofileUpdateView.as_view(), name="update-profile"),
 path('pending', PendingMechanicView.as_view(), name="pending-list"),
 path('my-requests/', MechanicReqListView.as_view(), name='mechanic_requests'),
 path('mechanicapproval/<int:pk>', update_status, name="mech-approve"),
 path('feedback-list/', FeedbackListView.as_view(), name='feedback_list'),
 path('create-bill-payment/<int:pk>/', BillPaymentCreateView.as_view(), name='create_bill_payment'),
-
+path('detail/<int:pk>',Mechanicupdateformview.as_view(),name='report'),
 
 
 # User URLs
@@ -47,7 +48,7 @@ path('car_renter_profile/view/', CarRenterProfileDetailView.as_view(), name='car
 path('rent_car/', RentCarCreateView.as_view(), name='rent_car_create'),
 path('rent_car/update/<int:pk>/', RentCarUpdateView.as_view(), name='rent_car_update'),
 path('rentcars/', UserRentCarListView.as_view(), name='rentcar_list'),
- path('my_reservations/', CarOwnerReservationsListView.as_view(), name='car_owner_reservations'),
+path('my_reservations/', CarOwnerReservationsListView.as_view(), name='car_owner_reservations'),
 
 # path('reservation/<int:pk>', ReservationDetailView.as_view(), name='reservation_detail'),
 
@@ -59,4 +60,4 @@ path('logout/', LogoutView, name='logout'),
 path('change-password/', CustomPasswordChangeView.as_view(), name='change_password'),
 path("payment/sucess/",PaymentSuccessView.as_view(),name="payment"),
 path('search/',mechanic_search, name='mechanic_search'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

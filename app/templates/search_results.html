@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
+    <a href="{% url 'home' %}" class="btn btn-primary btn-sm" style="position: absolute; top: 120px; left: 10px;"><i class="fas fa-home"></i> Home</a>
     <div>
         {%for me in mechanics%}
             {{me.name}}

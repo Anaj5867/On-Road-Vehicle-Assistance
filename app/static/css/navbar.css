@@ -9,7 +9,7 @@
     padding: 15px 0;
     background-image: linear-gradient(-90deg, #fff, #eee);
     box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.3);
-    webkittransition: all .8s;
+    /* webkittransition: all .8s; */
     /* Safari prior 6.1 */
     transition: all .8s;
 

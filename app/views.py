@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login,logout
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.views import PasswordChangeView
+from django.http import HttpResponse
+from .models import MechanicProfile
 # Create your views here.
 
 
@@ -50,9 +52,9 @@ class AdminRegistrationView(CreateView):
     template_name = 'Admin_register.html'
     success_url = reverse_lazy('admin-login')
 
-    # def form_valid(self, form):
-    #     form.instance.role = form.cleaned_data['role']
-    #     return super().form_valid(form)
+    def form_valid(self, form):
+        form.instance.role = form.cleaned_data['role']
+        return super().form_valid(form)
 
 
 class RegistrationView(CreateView):
@@ -64,6 +66,9 @@ class RegistrationView(CreateView):
     def form_valid(self, form):
         form.instance.role = form.cleaned_data['role']
         return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.success_url
 
 
 
@@ -136,18 +141,28 @@ class MechanicProfileAddView(CreateView):
     template_name = 'mechanic_profile_add.html'
     success_url = reverse_lazy('mechanic_home')
 
-    def get_object(self, queryset=None):
-        return MechanicProfile.objects.filter(user=self.request.user).first()
+    # def get_object(self, queryset=None):
+    #     return MechanicProfile.objects.filter(user=self.request.user).first()
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form) 
     
 
+# class MechanicProfileDetailView(DetailView):
+#     model = MechanicProfile
+#     template_name = 'mechanic_profile_view.html'
+#     context_object_name = 'data'
+#     success_url = reverse_lazy('update-profile')
+
+#     def get_object(self, queryset=None):
+#         # Retrieve the MechanicProfile object for the current user
+#         return get_object_or_404(MechanicProfile, user=self.request.user)
 class MechanicProfileDetailView(DetailView):
     model = MechanicProfile
     template_name = 'mechanic_profile_view.html'
     context_object_name = 'data'
+    success_url = reverse_lazy('update-profile')
 
     def get_object(self, queryset=None):
         # Retrieve the MechanicProfile object for the current user
@@ -168,6 +183,14 @@ def approve_mechanic(request, pk):
     if request.method == 'POST':
         mechanic_profile.status = 'approved'
         mechanic_profile.save()
+        return redirect('pending-list')  # Redirect to the pending list page
+    return redirect('pending-list')
+
+def delete_mechanic(request, pk):
+    mechanic_profile = get_object_or_404(MechanicProfile, pk=pk)
+    if request.method == 'POST':
+        mechanic_profile.delete()
+        messages.success(request, 'Mechanic request deleted successfully.')
         return redirect('pending-list')  # Redirect to the pending list page
     return redirect('pending-list')
 
@@ -444,8 +467,8 @@ class CarOwnerReservationsListView(ListView):
 
     def get_queryset(self):
         # Filter reservations by cars owned by the current car owner
-        return CarReserve.objects.filter(car__owner=self.request.user.carrental_profile)
-
+        owned_cars = RentCar.objects.filter(owner__user=self.request.user)
+        return CarReserve.objects.filter(car__in=owned_cars)
     
 class CustomPasswordChangeView(PasswordChangeView):
     template_name = 'change_password.html'
@@ -480,4 +503,29 @@ def mechanic_search(request):
             return render(request, 'search_results.html', {'form': form, 'error_message': error_message})
     else:
         form = MechanicSearchForm()
-        return render(request, 'search_results.html', {'form': form})    
+        return render(request, 'search_results.html', {'form': form})   
+
+# class Mechanicupdateformview(View):
+#     def get(self,request,*args,**kwargs):
+#         id = kwargs.get("pk")
+#         obj = ReqToMechanic.objects.get(id=id)
+#         form = DetailForm(instance=obj)
+#         return render(request,"DetailReport.html",{"form":form})
+       
+#     def post(self,request,*args,**kwargs):
+#         id = kwargs.get("pk")
+#         obj = ReqToMechanic.objects.get(id=id)
+#         form = DetailForm(request.POST,instance=obj)
+#         if form.is_valid():
+#             form.save()
+#             print('hlo')
+#             return redirect("mechanic_requests") 
+
+class Mechanicupdateformview(UpdateView):
+    model = ReqToMechanic
+    form_class = DetailForm
+    template_name = "DetailReport.html"
+    success_url = reverse_lazy("mechanic_requests")
+
+    def get_object(self):
+        return ReqToMechanic.objects.get(pk=self.kwargs["pk"])

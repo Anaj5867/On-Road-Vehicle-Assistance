@@ -40,6 +40,7 @@ class MechanicProfile(models.Model):
     experience = models.CharField(max_length=200)
     STATUS_CHOICES = [
         ("approved", "Approved"),
+       # ("delete","delete"),
         ("pending", "Pending"),
     ]
     status = models.CharField(max_length=200, choices=STATUS_CHOICES, default="pending")
@@ -50,7 +51,7 @@ class MechanicProfile(models.Model):
     ]
     specialized_in = models.CharField(max_length=200, choices=SPECIALIZATION_CHOICES)
     bio = models.CharField(max_length=200)
-    profile_pic = models.ImageField(upload_to="static/images/profile",default='static/images/profile/default.jpg', blank=True, null=True)
+    profile_pic = models.ImageField(upload_to="mech_pics",default='static/images/profile/default.jpg', blank=True, null=True)
 
     def __str__(self):
         return self.user.username
@@ -67,6 +68,7 @@ class ReqToMechanic(models.Model):
         ("pending", "Pending"),
     ]
     status = models.CharField(max_length=200, choices=STATUS_CHOICES, default="pending")
+    detail_head=models.CharField(max_length=200,null=True)
 
 
 class Bill(models.Model):

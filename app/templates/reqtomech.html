@@ -6,10 +6,10 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="" method="post">
+    <a href="{% url 'home' %}" class="btn btn-primary btn-sm" style="position: absolute; top: 120px; left: 10px;"><i class="fas fa-home"></i> Home</a>
+    <form action="" method="post" enctype="multipart/form-data">
         {%csrf_token%}
         {{form.as_p}}
         <button type="submit">send</button>
     </form>
-</body>
 </html>
